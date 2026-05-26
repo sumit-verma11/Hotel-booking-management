@@ -377,20 +377,22 @@ body {
 .create-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 4px 0;
+  gap: 20px;
+  padding: 16px 4px 8px;
 }
 
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .form-field label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #374151;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .form-error {
