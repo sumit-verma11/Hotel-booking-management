@@ -192,7 +192,7 @@ export default function Bookings() {
         header="Booking Details"
         visible={viewVisible}
         onHide={() => setViewVisible(false)}
-        style={{ width: 520 }}
+        style={{ width: 560 }}
       >
         {selected && (
           <div className="dialog-content">

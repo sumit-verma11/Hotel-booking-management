@@ -66,8 +66,9 @@ export default function ReusableFilter({ config, onApply, onClear, extraButtons 
           value={values[field.key]}
           onChange={(e) => handleChange(field.key, e.value)}
           placeholder={field.placeholder || field.label}
-          dateFormat="yy-mm-dd"
+          dateFormat="dd M yy"
           showIcon
+          iconDisplay="input"
           className="w-full"
         />
       );
