@@ -121,33 +121,46 @@ body {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
-.filter-row {
+.filter-fields-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 14px;
   align-items: flex-end;
+}
+
+.filter-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.filter-extra {
+  display: flex;
+  gap: 8px;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
 }
 
 .filter-field {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-width: 180px;
+  min-width: 160px;
 }
 
 .filter-field label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #666;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.filter-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-left: auto;
+  letter-spacing: 0.6px;
 }
 
 .table-card {
@@ -172,11 +185,13 @@ body {
 }
 
 .table-footer {
-  padding: 16px 20px;
+  padding: 12px 20px;
   border-top: 1px solid #e8ecf0;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .total-text {
@@ -243,33 +258,34 @@ body {
 }
 
 .dialog-content {
-  padding: 8px 0;
+  padding: 4px 0 8px;
 }
 
 .detail-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 20px 24px;
 }
 
 .detail-item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
 }
 
 .detail-label {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #999;
+  letter-spacing: 0.7px;
+  color: #94a3b8;
 }
 
 .detail-value {
   font-size: 14px;
-  color: #333;
+  color: #1e2a3a;
   font-weight: 500;
+  line-height: 1.4;
 }
 
 .p-datatable .p-datatable-thead > tr > th {
@@ -299,4 +315,28 @@ body {
 
 .p-dropdown {
   font-size: 14px;
+}
+
+.p-calendar {
+  width: 100%;
+}
+
+.p-calendar .p-inputtext {
+  width: 100%;
+}
+
+.p-dropdown,
+.p-inputtext,
+.p-calendar .p-inputtext {
+  border-radius: 6px;
+}
+
+.p-button {
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.p-datatable .p-datatable-wrapper {
+  overflow-x: auto;
 }

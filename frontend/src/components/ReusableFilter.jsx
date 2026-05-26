@@ -29,8 +29,7 @@ export default function ReusableFilter({ config, onApply, onClear, extraButtons 
   };
 
   const handleClear = () => {
-    const cleared = buildInitial();
-    setValues(cleared);
+    setValues(buildInitial());
     onClear();
   };
 
@@ -79,15 +78,17 @@ export default function ReusableFilter({ config, onApply, onClear, extraButtons 
 
   return (
     <div className="filter-card">
-      <div className="filter-row">
+      <div className="filter-fields-row">
         {config.map((field) => (
-          <div key={field.key} className="filter-field" style={{ minWidth: field.width || 200 }}>
+          <div key={field.key} className="filter-field" style={{ flex: `1 1 ${field.width || 180}px`, maxWidth: field.maxWidth || 280 }}>
             <label>{field.label}</label>
             {renderField(field)}
           </div>
         ))}
-        <div className="filter-actions">
-          {extraButtons}
+      </div>
+      <div className="filter-actions-row">
+        <div className="filter-extra">{extraButtons}</div>
+        <div className="filter-buttons">
           <Button label="Clear" icon="pi pi-times" outlined severity="secondary" onClick={handleClear} />
           <Button label="Apply Filters" icon="pi pi-search" onClick={handleApply} />
         </div>
