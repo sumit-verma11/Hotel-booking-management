@@ -1,31 +1,54 @@
-# Hotel Booking Management System
+# Hotel Booking Management
 
-A full-stack hotel booking management system built with Node.js, Express, MongoDB, React, and PrimeReact.
+A hotel booking system with three modules — Users, Hotels, and Bookings. Built with Node.js + MongoDB on the backend and React + PrimeReact on the frontend.
 
-## Prerequisites
+## Tech Stack
 
-- Node.js v18+
-- MongoDB v6+ (running locally or a connection string)
-- npm or yarn
+**Backend** — Node.js, Express, MongoDB, Mongoose, excel4node  
+**Frontend** — React 18, Vite, PrimeReact, React Router, Axios
 
 ## Project Structure
 
 ```
 hotelBooking/
-├── backend/          # Express + MongoDB API
-└── frontend/         # React + PrimeReact UI
+├── backend/
+│   ├── src/
+│   │   ├── controllers/
+│   │   ├── models/
+│   │   └── routes/
+│   ├── scripts/
+│   │   └── seed.js
+│   ├── server.js
+│   └── .env.example
+└── frontend/
+    └── src/
+        ├── components/
+        │   ├── ReusableTable.jsx
+        │   └── ReusableFilter.jsx
+        ├── pages/
+        │   ├── Users.jsx
+        │   ├── Hotels.jsx
+        │   └── Bookings.jsx
+        └── services/
+            └── api.js
 ```
 
-## Setup & Installation
+## Prerequisites
 
-### 1. Clone the repository
+- Node.js v18+
+- MongoDB v7 (local or Docker)
+- npm
+
+## Getting Started
+
+### 1. Clone
 
 ```bash
-git clone <repo-url>
-cd hotelBooking
+git clone https://github.com/sumit-verma11/Hotel-booking-management.git
+cd Hotel-booking-management
 ```
 
-### 2. Backend Setup
+### 2. Backend
 
 ```bash
 cd backend
@@ -33,178 +56,131 @@ npm install
 cp .env.example .env
 ```
 
-Edit `.env` and set your MongoDB connection string:
+Open `.env` and update if needed:
 
 ```
-PORT=5000
+PORT=5001
 MONGO_URI=mongodb://localhost:27017/hotel_booking
 ```
 
-### 3. Seed the Database
+> **Note:** On macOS, port 5000 is reserved by AirPlay Receiver (Control Center). Use 5001 or any other free port.
+
+Seed the database with sample data:
 
 ```bash
 npm run seed
 ```
 
-This populates the database with sample states, cities, users, hotels, and bookings.
-
-### 4. Start the Backend
+Start the server:
 
 ```bash
 npm run dev
 ```
 
-The API will be available at `http://localhost:5000`.
+API runs at `http://localhost:5001`
 
-### 5. Frontend Setup
+### 3. Frontend
 
 ```bash
-cd ../frontend
+cd frontend
 npm install
 npm run dev
 ```
 
-The UI will be available at `http://localhost:3000`.
+App runs at `http://localhost:3000`
+
+The Vite dev server proxies all `/api` requests to the backend automatically.
 
 ---
 
-## API Documentation
+## API Reference
 
-### Base URL
-`http://localhost:5000/api`
-
----
+Base URL: `http://localhost:5001/api`
 
 ### Users
 
-#### GET `/users/getUserList`
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/users/getUserList` | List users with search, pagination, sorting |
 
-Fetch users with pagination, filtering, and sorting.
-
-**Query Parameters:**
-
-| Parameter | Type   | Description                          |
-|-----------|--------|--------------------------------------|
-| search    | string | Search in name, email, phone         |
-| page      | number | Page number (default: 1)             |
-| limit     | number | Records per page (default: 10)       |
-| sortBy    | string | Field to sort by (default: createdAt)|
-| sortOrder | string | `asc` or `desc` (default: desc)      |
-
-**Response:**
-```json
-{
-  "success": true,
-  "data": [...],
-  "pagination": { "total": 10, "page": 1, "limit": 10, "pages": 1 }
-}
-```
+Query params: `search`, `page`, `limit`, `sortBy`, `sortOrder`, `bookedOnly`
 
 ---
 
 ### Hotels
 
-#### GET `/hotels/getHotelList`
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/hotels/getHotelList` | List hotels with filters, pagination, sorting |
 
-Fetch hotels with pagination, filtering, and sorting.
-
-**Query Parameters:**
-
-| Parameter | Type   | Description                          |
-|-----------|--------|--------------------------------------|
-| search    | string | Search in hotel name                 |
-| state     | string | Filter by state                      |
-| city      | string | Filter by city                       |
-| rating    | number | Filter by rating (1-5)               |
-| status    | string | `active` or `inactive`               |
-| page      | number | Page number (default: 1)             |
-| limit     | number | Records per page (default: 10)       |
-| sortBy    | string | Field to sort by                     |
-| sortOrder | string | `asc` or `desc`                      |
+Query params: `search`, `state`, `city`, `rating`, `status`, `page`, `limit`, `sortBy`, `sortOrder`
 
 ---
 
 ### Bookings
 
-#### GET `/bookings/getBookings`
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/bookings/getBookings` | List bookings with populated user & hotel |
+| POST | `/bookings/createBooking` | Create a new booking |
+| POST | `/bookings/:bookingId/cancel` | Cancel a booking |
 
-Fetch bookings with user and hotel details.
+**GET params:** `userId`, `hotelId`, `status`, `fromDate`, `toDate`, `page`, `limit`, `sortBy`, `sortOrder`, `download`
 
-**Query Parameters:**
+Pass `download=true` to export filtered results as an Excel file.
 
-| Parameter | Type    | Description                              |
-|-----------|---------|------------------------------------------|
-| userId    | string  | Filter by user ID                        |
-| hotelId   | string  | Filter by hotel ID                       |
-| status    | number  | 0=Confirmed, 1=Cancelled, 2=Completed    |
-| fromDate  | string  | Check-in date range start (YYYY-MM-DD)   |
-| toDate    | string  | Check-in date range end (YYYY-MM-DD)     |
-| page      | number  | Page number                              |
-| limit     | number  | Records per page                         |
-| sortBy    | string  | Field to sort by                         |
-| sortOrder | string  | `asc` or `desc`                          |
-| download  | boolean | Set to `true` to export as Excel file    |
-
-#### POST `/bookings/createBooking`
-
-Create a new booking.
-
-**Request Body:**
+**POST createBooking body:**
 ```json
 {
-  "userId": "string",
-  "hotelId": "string",
+  "userId": "<ObjectId>",
+  "hotelId": "<ObjectId>",
   "checkinDate": "2025-08-15",
   "guestCount": 2,
-  "requirements": "High floor room preferred"
+  "requirements": "Sea view room"
 }
 ```
 
-**Validation Rules:**
-- All fields except `requirements` are required
-- Cannot book for next day after 9 PM
-- No duplicate booking for same hotel on the same day (per user)
-- Default status is `CONFIRMED (0)`
-
-#### POST `/bookings/:bookingId/cancel`
-
-Cancel an existing booking.
+Booking rules enforced:
+- After 9 PM, bookings cannot be made for the next day
+- A user cannot have two active bookings at the same hotel on the same date
+- Newly created bookings default to `CONFIRMED` status
 
 ---
 
 ### Location
 
-#### GET `/state`
-
-Returns all states.
-
-#### GET `/city`
-
-Returns cities, optionally filtered by state.
-
-**Query Parameters:**
-
-| Parameter | Type   | Description                |
-|-----------|--------|----------------------------|
-| state     | string | Filter cities by state name |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/state` | All states |
+| GET | `/city` | All cities, or filtered by `?state=Maharashtra` |
 
 ---
 
-## Booking Status Codes
+## Booking Status
 
-| Code | Label     |
-|------|-----------|
-| 0    | Confirmed |
-| 1    | Cancelled |
-| 2    | Completed |
+| Value | Meaning |
+|-------|---------|
+| 0 | Confirmed |
+| 1 | Cancelled |
+| 2 | Completed |
+
+---
+
+## Seed Data
+
+Running `npm run seed` loads:
+
+- 8 Indian states
+- 17 cities
+- 10 users
+- 15 hotels (mix of active/inactive, ratings 3–5, across different states)
+- 12 bookings (mix of confirmed, cancelled, completed)
 
 ---
 
 ## Environment Variables
 
-See `backend/.env.example`:
-
 ```
-PORT=5000
+PORT=5001
 MONGO_URI=mongodb://localhost:27017/hotel_booking
 ```
