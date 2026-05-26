@@ -54,7 +54,6 @@ export default function ReusableFilter({ config, onApply, onClear, extraButtons 
           placeholder={`Select ${field.label}`}
           optionLabel="label"
           optionValue="value"
-          showClear
           className="w-full"
         />
       );
