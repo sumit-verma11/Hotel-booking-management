@@ -199,6 +199,32 @@ body {
   font-size: 13px;
 }
 
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  height: 42px;
+  background: transparent;
+  border: 1.5px solid #16a34a;
+  border-radius: 8px;
+  color: #16a34a;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.download-btn:hover {
+  background: #f0fdf4;
+  border-color: #15803d;
+  color: #15803d;
+}
+
+.download-btn i {
+  font-size: 13px;
+}
+
 .filter-field {
   display: flex;
   flex-direction: column;

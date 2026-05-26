@@ -210,8 +210,14 @@ export default function Bookings() {
 
   const filterExtraButtons = (
     <>
-      <Button label="New Booking" icon="pi pi-plus" onClick={() => { setForm(emptyForm); setFormErrors({}); setCreateVisible(true); }} />
-      <Button label="Download" icon="pi pi-download" outlined severity="success" onClick={() => downloadBookings(activeFilters)} />
+      <button className="apply-btn" onClick={() => { setForm(emptyForm); setFormErrors({}); setCreateVisible(true); }}>
+        <i className="pi pi-plus" />
+        New Booking
+      </button>
+      <button className="download-btn" onClick={() => downloadBookings(activeFilters)}>
+        <i className="pi pi-download" />
+        Download
+      </button>
     </>
   );
 
