@@ -3,9 +3,13 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import { Dropdown } from 'primereact/dropdown';
+import { Calendar } from 'primereact/calendar';
+import { InputNumber } from 'primereact/inputnumber';
+import { InputTextarea } from 'primereact/inputtextarea';
 import ReusableFilter from '../components/ReusableFilter';
 import ReusableTable from '../components/ReusableTable';
-import { fetchBookings, fetchUsers, fetchHotels, cancelBooking, downloadBookings } from '../services/api';
+import { fetchBookings, fetchUsers, fetchHotels, createBooking, cancelBooking, downloadBookings } from '../services/api';
 
 const statusOptions = [
   { label: 'Confirmed', value: 0 },
@@ -19,6 +23,8 @@ const statusMeta = {
   2: { label: 'Completed', cls: 'status-completed' }
 };
 
+const emptyForm = { userId: null, hotelId: null, checkinDate: null, guestCount: 1, requirements: '' };
+
 export default function Bookings() {
   const toast = useRef(null);
   const [data, setData] = useState([]);
@@ -27,18 +33,28 @@ export default function Bookings() {
   const [sortField, setSortField] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('desc');
   const [activeFilters, setActiveFilters] = useState({});
-  const [userOptions, setUserOptions] = useState([]);
+
+  const [bookedUserOptions, setBookedUserOptions] = useState([]);
+  const [allUserOptions, setAllUserOptions] = useState([]);
   const [hotelOptions, setHotelOptions] = useState([]);
+
   const [selected, setSelected] = useState(null);
   const [viewVisible, setViewVisible] = useState(false);
 
+  const [createVisible, setCreateVisible] = useState(false);
+  const [form, setForm] = useState(emptyForm);
+  const [formErrors, setFormErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+
   useEffect(() => {
-    Promise.all([
-      fetchUsers({ limit: 500 }),
-      fetchHotels({ limit: 500 })
-    ]).then(([usersRes, hotelsRes]) => {
-      setUserOptions(usersRes.data.data.map((u) => ({ label: u.name, value: u._id })));
-      setHotelOptions(hotelsRes.data.data.map((h) => ({ label: h.name, value: h._id })));
+    fetchUsers({ bookedOnly: 'true', limit: 500 }).then(({ data: res }) => {
+      setBookedUserOptions(res.data.map((u) => ({ label: u.name, value: u._id })));
+    });
+    fetchUsers({ limit: 500 }).then(({ data: res }) => {
+      setAllUserOptions(res.data.map((u) => ({ label: u.name, value: u._id })));
+    });
+    fetchHotels({ limit: 500 }).then(({ data: res }) => {
+      setHotelOptions(res.data.map((h) => ({ label: h.name, value: h._id })));
     });
     loadBookings({}, 1, 10, 'createdAt', 'desc');
   }, []);
@@ -98,8 +114,47 @@ export default function Bookings() {
     });
   };
 
+  const validateForm = () => {
+    const errors = {};
+    if (!form.userId) errors.userId = 'User is required';
+    if (!form.hotelId) errors.hotelId = 'Hotel is required';
+    if (!form.checkinDate) errors.checkinDate = 'Check-in date is required';
+    if (!form.guestCount || form.guestCount < 1) errors.guestCount = 'At least 1 guest required';
+    return errors;
+  };
+
+  const handleCreateSubmit = async () => {
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await createBooking({
+        userId: form.userId,
+        hotelId: form.hotelId,
+        checkinDate: new Date(form.checkinDate).toISOString().split('T')[0],
+        guestCount: form.guestCount,
+        requirements: form.requirements
+      });
+      toast.current.show({ severity: 'success', summary: 'Booking Created', detail: 'Booking confirmed successfully' });
+      setCreateVisible(false);
+      setForm(emptyForm);
+      setFormErrors({});
+      loadBookings(activeFilters, 1, pagination.limit, sortField, sortOrder);
+      fetchUsers({ bookedOnly: 'true', limit: 500 }).then(({ data: res }) => {
+        setBookedUserOptions(res.data.map((u) => ({ label: u.name, value: u._id })));
+      });
+    } catch (err) {
+      toast.current.show({ severity: 'error', summary: 'Error', detail: err?.response?.data?.message || 'Failed to create booking' });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const filterConfig = [
-    { key: 'userId', type: 'dropdown', label: 'User', options: userOptions },
+    { key: 'userId', type: 'dropdown', label: 'User', options: bookedUserOptions },
     { key: 'hotelId', type: 'dropdown', label: 'Hotel', options: hotelOptions },
     { key: 'status', type: 'dropdown', label: 'Status', options: statusOptions },
     { key: 'fromDate', type: 'date', label: 'Check-in From' },
@@ -107,16 +162,8 @@ export default function Bookings() {
   ];
 
   const columns = [
-    {
-      field: 'userId.name',
-      header: 'Guest Name',
-      body: (row) => row.userId?.name || '-'
-    },
-    {
-      field: 'hotelId.name',
-      header: 'Hotel Name',
-      body: (row) => row.hotelId?.name || '-'
-    },
+    { field: 'userId.name', header: 'Guest Name', body: (row) => row.userId?.name || '-' },
+    { field: 'hotelId.name', header: 'Hotel Name', body: (row) => row.hotelId?.name || '-' },
     {
       field: 'checkInDate',
       header: 'Check-in Date',
@@ -161,21 +208,20 @@ export default function Bookings() {
     }
   ];
 
-  const downloadButton = (
-    <Button
-      label="Download"
-      icon="pi pi-download"
-      outlined
-      severity="success"
-      onClick={() => downloadBookings(activeFilters)}
-    />
+  const filterExtraButtons = (
+    <>
+      <Button label="New Booking" icon="pi pi-plus" onClick={() => { setForm(emptyForm); setFormErrors({}); setCreateVisible(true); }} />
+      <Button label="Download" icon="pi pi-download" outlined severity="success" onClick={() => downloadBookings(activeFilters)} />
+    </>
   );
 
   return (
     <div>
       <Toast ref={toast} />
       <ConfirmDialog />
-      <ReusableFilter config={filterConfig} onApply={handleApply} onClear={handleClear} extraButtons={downloadButton} />
+
+      <ReusableFilter config={filterConfig} onApply={handleApply} onClear={handleClear} extraButtons={filterExtraButtons} />
+
       <ReusableTable
         title="Bookings"
         columns={columns}
@@ -188,12 +234,7 @@ export default function Bookings() {
         sortOrder={sortOrder}
       />
 
-      <Dialog
-        header="Booking Details"
-        visible={viewVisible}
-        onHide={() => setViewVisible(false)}
-        style={{ width: 560 }}
-      >
+      <Dialog header="Booking Details" visible={viewVisible} onHide={() => setViewVisible(false)} style={{ width: 560 }}>
         {selected && (
           <div className="dialog-content">
             <div className="detail-grid">
@@ -240,6 +281,90 @@ export default function Bookings() {
             </div>
           </div>
         )}
+      </Dialog>
+
+      <Dialog
+        header="New Booking"
+        visible={createVisible}
+        onHide={() => { setCreateVisible(false); setFormErrors({}); }}
+        style={{ width: 520 }}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+            <Button label="Cancel" icon="pi pi-times" outlined severity="secondary" onClick={() => setCreateVisible(false)} />
+            <Button label="Create Booking" icon="pi pi-check" loading={submitting} onClick={handleCreateSubmit} />
+          </div>
+        }
+      >
+        <div className="create-form">
+          <div className="form-field">
+            <label>User *</label>
+            <Dropdown
+              value={form.userId}
+              options={allUserOptions}
+              onChange={(e) => setForm((p) => ({ ...p, userId: e.value }))}
+              placeholder="Select User"
+              optionLabel="label"
+              optionValue="value"
+              filter
+              className={`w-full ${formErrors.userId ? 'p-invalid' : ''}`}
+            />
+            {formErrors.userId && <small className="form-error">{formErrors.userId}</small>}
+          </div>
+
+          <div className="form-field">
+            <label>Hotel *</label>
+            <Dropdown
+              value={form.hotelId}
+              options={hotelOptions}
+              onChange={(e) => setForm((p) => ({ ...p, hotelId: e.value }))}
+              placeholder="Select Hotel"
+              optionLabel="label"
+              optionValue="value"
+              filter
+              className={`w-full ${formErrors.hotelId ? 'p-invalid' : ''}`}
+            />
+            {formErrors.hotelId && <small className="form-error">{formErrors.hotelId}</small>}
+          </div>
+
+          <div className="form-field">
+            <label>Check-in Date *</label>
+            <Calendar
+              value={form.checkinDate}
+              onChange={(e) => setForm((p) => ({ ...p, checkinDate: e.value }))}
+              placeholder="Select date"
+              dateFormat="dd M yy"
+              showIcon
+              iconDisplay="input"
+              minDate={new Date()}
+              className={`w-full ${formErrors.checkinDate ? 'p-invalid' : ''}`}
+            />
+            {formErrors.checkinDate && <small className="form-error">{formErrors.checkinDate}</small>}
+          </div>
+
+          <div className="form-field">
+            <label>Number of Guests *</label>
+            <InputNumber
+              value={form.guestCount}
+              onValueChange={(e) => setForm((p) => ({ ...p, guestCount: e.value }))}
+              min={1}
+              max={20}
+              showButtons
+              className={`w-full ${formErrors.guestCount ? 'p-invalid' : ''}`}
+            />
+            {formErrors.guestCount && <small className="form-error">{formErrors.guestCount}</small>}
+          </div>
+
+          <div className="form-field">
+            <label>Special Requests</label>
+            <InputTextarea
+              value={form.requirements}
+              onChange={(e) => setForm((p) => ({ ...p, requirements: e.target.value }))}
+              placeholder="Any special requests..."
+              rows={3}
+              className="w-full"
+            />
+          </div>
+        </div>
       </Dialog>
     </div>
   );

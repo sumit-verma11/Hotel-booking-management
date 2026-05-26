@@ -13,8 +13,9 @@ export default function ReusableFilter({ config, onApply, onClear, extraButtons 
 
   const [values, setValues] = useState(buildInitial);
 
-  const handleChange = (key, value) => {
+  const handleChange = (key, value, field) => {
     setValues((prev) => ({ ...prev, [key]: value }));
+    if (field?.onChange) field.onChange(value);
   };
 
   const handleApply = () => {
@@ -38,7 +39,7 @@ export default function ReusableFilter({ config, onApply, onClear, extraButtons 
       return (
         <InputText
           value={values[field.key]}
-          onChange={(e) => handleChange(field.key, e.target.value)}
+          onChange={(e) => handleChange(field.key, e.target.value, field)}
           placeholder={field.placeholder || field.label}
           className="w-full"
         />
@@ -50,7 +51,7 @@ export default function ReusableFilter({ config, onApply, onClear, extraButtons 
         <Dropdown
           value={values[field.key]}
           options={field.options}
-          onChange={(e) => handleChange(field.key, e.value)}
+          onChange={(e) => handleChange(field.key, e.value, field)}
           placeholder={`Select ${field.label}`}
           optionLabel="label"
           optionValue="value"
@@ -63,7 +64,7 @@ export default function ReusableFilter({ config, onApply, onClear, extraButtons 
       return (
         <Calendar
           value={values[field.key]}
-          onChange={(e) => handleChange(field.key, e.value)}
+          onChange={(e) => handleChange(field.key, e.value, field)}
           placeholder={field.placeholder || field.label}
           dateFormat="dd M yy"
           showIcon

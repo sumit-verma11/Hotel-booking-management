@@ -6,6 +6,7 @@ import Hotels from './pages/Hotels';
 import Bookings from './pages/Bookings';
 
 const pageTitles = {
+  '/': 'Users',
   '/users': 'Users',
   '/hotels': 'Hotels',
   '/bookings': 'Bookings'
