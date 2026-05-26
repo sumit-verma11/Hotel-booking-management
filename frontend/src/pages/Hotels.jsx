@@ -53,11 +53,11 @@ export default function Hotels() {
   };
 
   const filterConfig = [
-    { key: 'search', type: 'text', label: 'Search', placeholder: 'Search hotel name...', width: 220 },
-    { key: 'state', type: 'dropdown', label: 'State', options: stateOptions, width: 180, onChange: handleStateChange },
-    { key: 'city', type: 'dropdown', label: 'City', options: cityOptions, width: 180 },
-    { key: 'rating', type: 'dropdown', label: 'Rating', options: ratingOptions, width: 150 },
-    { key: 'status', type: 'dropdown', label: 'Status', options: statusOptions, width: 150 }
+    { key: 'search', type: 'text', label: 'Search', placeholder: 'Search hotel name...' },
+    { key: 'state', type: 'dropdown', label: 'State', options: stateOptions, onChange: handleStateChange },
+    { key: 'city', type: 'dropdown', label: 'City', options: cityOptions },
+    { key: 'rating', type: 'dropdown', label: 'Rating', options: ratingOptions },
+    { key: 'status', type: 'dropdown', label: 'Status', options: statusOptions }
   ];
 
   const handleApply = (filters) => {

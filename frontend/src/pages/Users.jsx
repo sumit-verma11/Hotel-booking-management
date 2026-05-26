@@ -4,7 +4,7 @@ import ReusableTable from '../components/ReusableTable';
 import { fetchUsers } from '../services/api';
 
 const filterConfig = [
-  { key: 'search', type: 'text', label: 'Search', placeholder: 'Search by name, email, phone...', width: 280 }
+  { key: 'search', type: 'text', label: 'Search', placeholder: 'Search by name, email, phone...', span: 3 }
 ];
 
 export default function Users() {

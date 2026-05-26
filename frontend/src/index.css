@@ -121,19 +121,18 @@ body {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
-.filter-fields-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  align-items: flex-end;
+.filter-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
 }
 
 .filter-actions-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 16px;
-  padding-top: 14px;
+  margin-top: 18px;
+  padding-top: 16px;
   border-top: 1px solid #f1f5f9;
 }
 
@@ -152,7 +151,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-width: 160px;
 }
 
 .filter-field label {
@@ -161,6 +159,10 @@ body {
   color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.6px;
+}
+
+.w-full {
+  width: 100%;
 }
 
 .table-card {

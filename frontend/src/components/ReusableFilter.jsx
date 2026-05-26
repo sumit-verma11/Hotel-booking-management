@@ -40,7 +40,7 @@ export default function ReusableFilter({ config, onApply, onClear, extraButtons 
           value={values[field.key]}
           onChange={(e) => handleChange(field.key, e.target.value)}
           placeholder={field.placeholder || field.label}
-          style={{ width: '100%' }}
+          className="w-full"
         />
       );
     }
@@ -55,7 +55,7 @@ export default function ReusableFilter({ config, onApply, onClear, extraButtons 
           optionLabel="label"
           optionValue="value"
           showClear
-          style={{ width: '100%' }}
+          className="w-full"
         />
       );
     }
@@ -68,7 +68,7 @@ export default function ReusableFilter({ config, onApply, onClear, extraButtons 
           placeholder={field.placeholder || field.label}
           dateFormat="yy-mm-dd"
           showIcon
-          style={{ width: '100%' }}
+          className="w-full"
         />
       );
     }
@@ -78,9 +78,13 @@ export default function ReusableFilter({ config, onApply, onClear, extraButtons 
 
   return (
     <div className="filter-card">
-      <div className="filter-fields-row">
+      <div className="filter-fields-grid">
         {config.map((field) => (
-          <div key={field.key} className="filter-field" style={{ flex: `1 1 ${field.width || 180}px`, maxWidth: field.maxWidth || 280 }}>
+          <div
+            key={field.key}
+            className="filter-field"
+            style={field.span ? { gridColumn: `span ${field.span}` } : undefined}
+          >
             <label>{field.label}</label>
             {renderField(field)}
           </div>

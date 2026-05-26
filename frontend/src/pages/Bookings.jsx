@@ -99,11 +99,11 @@ export default function Bookings() {
   };
 
   const filterConfig = [
-    { key: 'userId', type: 'dropdown', label: 'User', options: userOptions, width: 200 },
-    { key: 'hotelId', type: 'dropdown', label: 'Hotel', options: hotelOptions, width: 200 },
-    { key: 'status', type: 'dropdown', label: 'Status', options: statusOptions, width: 160 },
-    { key: 'fromDate', type: 'date', label: 'From Date', width: 160 },
-    { key: 'toDate', type: 'date', label: 'To Date', width: 160 }
+    { key: 'userId', type: 'dropdown', label: 'User', options: userOptions },
+    { key: 'hotelId', type: 'dropdown', label: 'Hotel', options: hotelOptions },
+    { key: 'status', type: 'dropdown', label: 'Status', options: statusOptions },
+    { key: 'fromDate', type: 'date', label: 'Check-in From' },
+    { key: 'toDate', type: 'date', label: 'Check-in To' }
   ];
 
   const columns = [
