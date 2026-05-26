@@ -94,7 +94,10 @@ export default function ReusableFilter({ config, onApply, onClear, extraButtons 
       <div className="filter-actions-row">
         <div className="filter-extra">{extraButtons}</div>
         <div className="filter-buttons">
-          <Button label="Clear" icon="pi pi-times" outlined severity="secondary" onClick={handleClear} />
+          <button className="clear-btn" onClick={handleClear}>
+            <i className="pi pi-refresh" />
+            Clear
+          </button>
           <Button label="Apply Filters" icon="pi pi-search" onClick={handleApply} />
         </div>
       </div>

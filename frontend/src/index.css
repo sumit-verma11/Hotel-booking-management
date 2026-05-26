@@ -143,8 +143,35 @@ body {
 
 .filter-buttons {
   display: flex;
-  gap: 8px;
+  gap: 10px;
+  align-items: center;
   margin-left: auto;
+}
+
+.clear-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  height: 42px;
+  background: transparent;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.clear-btn:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #475569;
+}
+
+.clear-btn i {
+  font-size: 13px;
 }
 
 .filter-field {
